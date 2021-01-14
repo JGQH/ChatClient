@@ -20,5 +20,4 @@ This project is a practice for sockets in Pythons using PyQt5 threads. This proj
 *Currently no illustrations*
 
 ## To-Do
-- Inputs for name and message
 - Button for sending message
