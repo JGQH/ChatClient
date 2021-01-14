@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QPlainTextEdit, QLineEdit
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QPlainTextEdit, QLineEdit, QPushButton
 import sys
 
 class MainWindow(QMainWindow):
@@ -8,6 +8,7 @@ class MainWindow(QMainWindow):
 
         self.addLabels()
         self.addHolders()
+        self.addButtons()
 
     def addLabels(self):
         lblRecieved = QLabel(self)
@@ -36,7 +37,7 @@ class MainWindow(QMainWindow):
         qptMessage = QPlainTextEdit(self)
         qptMessage.move(10, 380)
         qptMessage.resize(350, 110)
-        
+
         def sizeChecker():
             txt = qptMessage.toPlainText()
             if(len(txt) > 500):
@@ -45,6 +46,20 @@ class MainWindow(QMainWindow):
         qptMessage.textChanged.connect(sizeChecker)
         self.qptMessage = qptMessage
 
+    def addButtons(self):
+        btnClear = QPushButton(self)
+        btnClear.move(370, 355)
+        btnClear.resize(120, 60)
+        btnClear.setText("Clear Chat")
+        def clearChat():
+            self.qptRecieved.setPlainText("")
+        btnClear.clicked.connect(clearChat)
+
+        btnSend = QPushButton(self)
+        btnSend.move(370, 430)
+        btnSend.resize(120, 60)
+        btnSend.setText("Send Message")
+        
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     cc = MainWindow()

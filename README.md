@@ -20,4 +20,6 @@ This project is a practice for sockets in Pythons using PyQt5 threads. This proj
 *Currently no illustrations*
 
 ## To-Do
-- Button for sending message
+- PyQt5 Multithreading
+- Create thread to recieve messages
+- Create thread to send messages
