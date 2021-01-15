@@ -9,6 +9,7 @@ class MainWindow(QMainWindow):
     FORMAT = 'utf-8'
     def __init__(self):
         super().__init__()
+        self.setWindowTitle("ChatClient")
         self.setFixedSize(500, 500)
 
         self.addLabels()

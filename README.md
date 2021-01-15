@@ -10,7 +10,7 @@ Simple windowed chat application
 - [To-Do](#to-do)
 
 ## Introduction
-This project is a practice for sockets in Pythons using PyQt5 threads. This project is the client-side, for server-side check [Nikko77's repository](https://www.youtube.com/watch?v=D5xX6nRWDko).
+This project is a practice for sockets in Python using PyQt5 sockets, called QTcpSockets. This project is the client-side, for server-side check [Nikko77's repository](https://github.com/Nikko-77/ChatServer).
 
 ## Technologies
 - Python v3.8.5
