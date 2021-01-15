@@ -20,6 +20,6 @@ This project is a practice for sockets in Pythons using PyQt5 threads. This proj
 *Currently no illustrations*
 
 ## To-Do
-- PyQt5 Multithreading
-- Create thread to recieve messages
-- Create thread to send messages
+- Include username in messages
+- Format messges in json
+- Implement automatic reconnection

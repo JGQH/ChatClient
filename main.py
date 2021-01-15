@@ -1,14 +1,42 @@
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QPlainTextEdit, QLineEdit, QPushButton
+from PyQt5.QtNetwork import QTcpSocket
 import sys
 
 class MainWindow(QMainWindow):
+    SERVER = '10.242.242.216'
+    PORT = 7778
+    FORMAT = 'utf-8'
     def __init__(self):
         super().__init__()
         self.setFixedSize(500, 500)
 
         self.addLabels()
         self.addHolders()
+        self.addSocket()
         self.addButtons()
+
+    def addSocket(self):
+        socket = QTcpSocket(self)
+        def onConnect():
+            print("[CLIENT CONNECTED]")
+
+        def onDisconnect():
+            print("[CLIENT DISCONNECTED]")
+
+        def onRead():
+            msg = bytes(socket.readAll()).decode(MainWindow.FORMAT)
+
+            log = "{history}\n{msg}".format(
+                history=self.qptRecieved.toPlainText(),
+                msg=msg
+            )
+            self.qptRecieved.setPlainText(log)
+            pass
+        socket.connected.connect(onConnect)
+        socket.disconnected.connect(onDisconnect)
+        socket.readyRead.connect(onRead)
+        self.socket = socket
+        socket.connectToHost(MainWindow.SERVER, MainWindow.PORT)
 
     def addLabels(self):
         lblRecieved = QLabel(self)
@@ -58,7 +86,13 @@ class MainWindow(QMainWindow):
         btnSend = QPushButton(self)
         btnSend.move(370, 430)
         btnSend.resize(120, 60)
+        def sendMsg():
+            msg = self.qptMessage.toPlainText()
+
+            self.qptMessage.setPlainText("")
+            self.socket.writeData(msg.encode(MainWindow.FORMAT))
         btnSend.setText("Send Message")
+        btnSend.clicked.connect(sendMsg)
         
 if __name__ == "__main__":
     app = QApplication(sys.argv)
