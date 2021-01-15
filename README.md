@@ -20,6 +20,5 @@ This project is a practice for sockets in Pythons using PyQt5 threads. This proj
 *Currently no illustrations*
 
 ## To-Do
-- Include username in messages
-- Format messges in json
 - Implement automatic reconnection
+- Implement text formatting based on message type

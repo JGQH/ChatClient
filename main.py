@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QPlainTextEdit, QLineEdit, QPushButton
 from PyQt5.QtNetwork import QTcpSocket
+import json
 import sys
 
 class MainWindow(QMainWindow):
@@ -15,6 +16,25 @@ class MainWindow(QMainWindow):
         self.addSocket()
         self.addButtons()
 
+    def formatMsg(self, reading)->str:
+        msg = bytes(reading).decode(MainWindow.FORMAT)
+
+        try:
+            data = json.loads(msg)
+
+            return "[{name}] {msg}".format(
+                name=data["name"],
+                msg=data["msg"]
+            )
+        except:
+            return "[SERVER] " + msg
+
+    def formatJson(self, **kwargs)->bytes:
+        data = {}
+        for key, val in kwargs.items():
+            data[key] = val
+        return json.dumps(data).encode(MainWindow.FORMAT)
+
     def addSocket(self):
         socket = QTcpSocket(self)
         def onConnect():
@@ -24,8 +44,7 @@ class MainWindow(QMainWindow):
             print("[CLIENT DISCONNECTED]")
 
         def onRead():
-            msg = bytes(socket.readAll()).decode(MainWindow.FORMAT)
-
+            msg = self.formatMsg(socket.readAll())
             log = "{history}\n{msg}".format(
                 history=self.qptRecieved.toPlainText(),
                 msg=msg
@@ -87,10 +106,16 @@ class MainWindow(QMainWindow):
         btnSend.move(370, 430)
         btnSend.resize(120, 60)
         def sendMsg():
-            msg = self.qptMessage.toPlainText()
+            if(self.socket.state() == QTcpSocket.ConnectedState):
+                name = self.qleName.text()
+                msg = self.qptMessage.toPlainText()
 
-            self.qptMessage.setPlainText("")
-            self.socket.writeData(msg.encode(MainWindow.FORMAT))
+                self.qptMessage.setPlainText("")
+                self.qptMessage.setFocus()
+                self.socket.writeData(self.formatJson(
+                    name=name,
+                    msg=msg
+                ))
         btnSend.setText("Send Message")
         btnSend.clicked.connect(sendMsg)
         
