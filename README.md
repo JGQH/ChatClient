@@ -21,4 +21,3 @@ This project is a practice for sockets in Python using PyQt5 sockets, called QTc
 
 ## To-Do
 - Implement automatic reconnection
-- Implement text formatting based on message type

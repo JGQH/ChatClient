@@ -17,18 +17,29 @@ class MainWindow(QMainWindow):
         self.addSocket()
         self.addButtons()
 
-    def formatMsg(self, reading)->str:
+    def showMessage(self, msg):
+        message = "[{name}] {msg}".format(
+            name=msg["name"],
+            msg=msg["msg"]
+        )
+        log = "{history}\n{msg}".format(
+            history=self.qptRecieved.toPlainText(),
+            msg=message
+        )
+        self.qptRecieved.setPlainText(log)
+
+    def showCount(self, msg):
+        self.lblCount.setText("Connected users: {count}".format(
+            count=msg["count"]
+        ))
+        pass
+
+    def formatMsg(self, reading)->dict:
         msg = bytes(reading).decode(MainWindow.FORMAT)
-
         try:
-            data = json.loads(msg)
-
-            return "[{name}] {msg}".format(
-                name=data["name"],
-                msg=data["msg"]
-            )
+            return json.loads(msg)
         except:
-            return "[SERVER] " + msg
+            return {}
 
     def formatJson(self, **kwargs)->bytes:
         data = {}
@@ -46,12 +57,15 @@ class MainWindow(QMainWindow):
 
         def onRead():
             msg = self.formatMsg(socket.readAll())
-            log = "{history}\n{msg}".format(
-                history=self.qptRecieved.toPlainText(),
-                msg=msg
-            )
-            self.qptRecieved.setPlainText(log)
-            pass
+
+            switcher = {
+                "msg": self.showMessage,
+                "count": self.showCount
+            }
+            
+            func = switcher.get(msg["type"], lambda x:print(x))
+            func(msg)
+
         socket.connected.connect(onConnect)
         socket.disconnected.connect(onDisconnect)
         socket.readyRead.connect(onRead)
@@ -63,6 +77,11 @@ class MainWindow(QMainWindow):
         lblRecieved.move(10, 10)
         lblRecieved.resize(100, 15)
         lblRecieved.setText("Messages recieved:")
+
+        lblCount = QLabel(self)
+        lblCount.move(250, 10)
+        lblCount.resize(100, 15)
+        self.lblCount = lblCount
 
         lblName = QLabel(self)
         lblName.move(10, 357)
@@ -115,7 +134,8 @@ class MainWindow(QMainWindow):
                 self.qptMessage.setFocus()
                 self.socket.writeData(self.formatJson(
                     name=name,
-                    msg=msg
+                    msg=msg,
+                    type="msg"
                 ))
         btnSend.setText("Send Message")
         btnSend.clicked.connect(sendMsg)
